@@ -266,6 +266,7 @@ MonoBehaviour:
   rows: 5
   columns: 11
   EnemySpacing: 2
+  EnemySpeed: 3
 --- !u!4 &384358677
 Transform:
   m_ObjectHideFlags: 0
