@@ -6,7 +6,7 @@ using Pose = Thalmic.Myo.Pose;
 using UnlockType = Thalmic.Myo.UnlockType;
 using VibrationType = Thalmic.Myo.VibrationType;
 
-public class Movement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     // Myo game object to connect with.
     // This object must have a ThalmicMyo script attached.
@@ -17,19 +17,33 @@ public class Movement : MonoBehaviour
     // which they are active.
     private Pose lastPose = Pose.Unknown;
 
-    private SpriteRenderer render;
-    private Rigidbody2D rb;
 
     public float horizontalSpeed = 2.0f;
+    public Laser laserPrefab;
+    public float firingRate = 0.5f;
+
+    private GameObject laserParent;
+    private Coroutine firingCoroutine;
+    private bool runningCoroutine = false;
+
+    private SpriteRenderer render;
+    private Rigidbody2D rb;
 
     void Start()
     {
         render = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+
+        laserParent = GameObject.Find("LaserParent");
+        if (!laserParent)
+        {
+            laserParent = new GameObject("LaserParent");
+        }
     }
 
     void Update()
     {
+
         // Access the ThalmicMyo component attached to the Myo game object.
         ThalmicMyo thalmicMyo = myo.GetComponent<ThalmicMyo>();
 
@@ -42,18 +56,26 @@ public class Movement : MonoBehaviour
         {
             lastPose = thalmicMyo.pose;
 
-            // Vibrate the Myo armband when a fist is made.
+            // Fire laser when fist is made
+            // Vibrates the armband
             if (thalmicMyo.pose == Pose.Fist)
             {
                 thalmicMyo.Vibrate(VibrationType.Medium);
 
+                //Firing Code here
+                firingCoroutine = StartCoroutine(FireCoroutine());
+
                 ExtendUnlockAndNotifyUserAction(thalmicMyo);
 
+            }
+            else if (runningCoroutine)
+            {
+                StopCoroutine(firingCoroutine);
             }
 
 
             // hand position idle 
-            else if (thalmicMyo.pose == Pose.Rest)
+            if (thalmicMyo.pose == Pose.Rest)
             {
                 render.color = Color.cyan;
                 Vector2 playerVelocity = new Vector2(0, 0);
@@ -87,6 +109,22 @@ public class Movement : MonoBehaviour
         }
     }
 
+    private IEnumerator FireCoroutine()
+    {
+        while (true)
+        {
+            runningCoroutine = true;
+            FireLaser();
+            yield return new WaitForSeconds(firingRate);
+            runningCoroutine = false;
+        }
+    }
+
+    private void FireLaser()
+    {
+        Laser l = Instantiate(laserPrefab, laserParent.transform);
+        l.transform.position = gameObject.transform.position;
+    }
 
     // seems to just be the standard 
     void ExtendUnlockAndNotifyUserAction(ThalmicMyo myo)

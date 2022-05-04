@@ -29,5 +29,16 @@ public class Enemy : MonoBehaviour
         spriteRenderer.sprite = this.animationSprites[currentAnimation];//update sprite
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.GetComponent<Laser>())
+        {
+            //destroy laser
+            Destroy(collision.gameObject);
+            //destroy the enemy
+            Destroy(gameObject);
+        }
+    }
+
 
 }
