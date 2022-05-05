@@ -23,13 +23,17 @@ public class PlayerController : MonoBehaviour
     public Laser laserPrefab;
     public float firingRate = 0.5f;
     public System.Action killed;// if player is dead
+    public AudioClip laserSound;
+    public AudioClip deathSound;
 
     private GameObject laserParent;
     private Coroutine firingCoroutine;
     private bool runningCoroutine = false;
+    private bool alive = true;
 
     private SpriteRenderer render;
     private Rigidbody2D rb;
+    private AudioSource audioSource;
     private ThalmicMyo thalmicMyo;
 
     void Start()
@@ -37,6 +41,7 @@ public class PlayerController : MonoBehaviour
         render = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         thalmicMyo = myo.GetComponent<ThalmicMyo>();
+        audioSource = GetComponent<AudioSource>();
 
         laserParent = GameObject.Find("LaserParent");
         if (!laserParent)
@@ -59,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
             // Fire laser when fist is made
             // Vibrates the armband
-            if (thalmicMyo.pose == Pose.Fist)
+            if (thalmicMyo.pose == Pose.Fist && alive)
             {
                 thalmicMyo.Vibrate(VibrationType.Medium);
 
@@ -126,6 +131,36 @@ public class PlayerController : MonoBehaviour
     {
         Laser l = Instantiate(laserPrefab, laserParent.transform);
         l.transform.position = gameObject.transform.position;
+
+        //playing sound
+        if (audioSource)
+            audioSource.PlayOneShot(laserSound);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.GetComponent<Bomb>())
+        {
+            SoundController sc = FindObjectOfType<SoundController>();
+            if (sc && alive)
+            {
+                sc.PlayOneShot(deathSound);
+            }
+
+            //destroy bomb
+            Destroy(collision.gameObject);
+            //destroy the player
+            alive = false;
+            render.enabled = false;
+
+            StartCoroutine(Dead());
+        }
+    }
+
+    private IEnumerator Dead()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        SceneManager.LoadScene(0);
     }
 
     // seems to just be the standard 
@@ -141,22 +176,6 @@ public class PlayerController : MonoBehaviour
         myo.NotifyUserAction();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.GetComponent<Bomb>())
-        {
-            //destroy bomb
-            Destroy(collision.gameObject);
-            //destroy the player
-            Destroy(gameObject);
 
-            SceneManager.LoadScene(0);
-        }
-    }
-
-    private void EndGame()
-    {
-
-    }
 
 }

@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     private SpriteRenderer spriteRenderer;//which sprite is rendered
     private int currentAnimation;//keeps track of current sprite 
     public System.Action killed;// if Enemy is dead
+    public AudioClip hitSound;
+
 
     private void Awake()
     {
@@ -34,6 +36,13 @@ public class Enemy : MonoBehaviour
     {
         if (collision.GetComponent<Laser>())
         {
+
+            SoundController sc = FindObjectOfType<SoundController>();
+            if (sc)
+            {
+                sc.PlayOneShot(hitSound);
+            }
+
             this.killed.Invoke();
             this.gameObject.SetActive(false);//not active on killed
             //destroy laser
