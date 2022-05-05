@@ -5,6 +5,7 @@ using LockingPolicy = Thalmic.Myo.LockingPolicy;
 using Pose = Thalmic.Myo.Pose;
 using UnlockType = Thalmic.Myo.UnlockType;
 using VibrationType = Thalmic.Myo.VibrationType;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -29,11 +30,13 @@ public class PlayerController : MonoBehaviour
 
     private SpriteRenderer render;
     private Rigidbody2D rb;
+    private ThalmicMyo thalmicMyo;
 
     void Start()
     {
         render = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+        thalmicMyo = myo.GetComponent<ThalmicMyo>();
 
         laserParent = GameObject.Find("LaserParent");
         if (!laserParent)
@@ -44,9 +47,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-
-        // Access the ThalmicMyo component attached to the Myo game object.
-        ThalmicMyo thalmicMyo = myo.GetComponent<ThalmicMyo>();
 
         // Check if the pose has changed since last update.
         // The ThalmicMyo component of a Myo game object has a pose property that is set to the
@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour
                 render.color = Color.red;
                 Vector2 playerVelocity = new Vector2(horizontalSpeed, rb.velocity.y);
                 rb.velocity = playerVelocity;
+
 
                 ExtendUnlockAndNotifyUserAction(thalmicMyo);
             }
@@ -142,15 +143,20 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.GetComponent<Laser>())
+        if (collision.GetComponent<Bomb>())
         {
-            this.killed.Invoke();
             //destroy bomb
             Destroy(collision.gameObject);
             //destroy the player
             Destroy(gameObject);
 
+            SceneManager.LoadScene(0);
         }
+    }
+
+    private void EndGame()
+    {
+
     }
 
 }
