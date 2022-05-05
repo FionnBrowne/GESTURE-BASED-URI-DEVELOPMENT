@@ -60,9 +60,9 @@ public class ThalmicMyo : MonoBehaviour {
     }
     //un comment when done
     /// Notify the Myo that a user action was recognized.
-    public void NotifyUserAction () {
-        _myo.NotifyUserAction ();
-    }
+    //public void NotifyUserAction () {
+    //    _myo.NotifyUserAction ();
+    //}
 
     void Start() {
     }

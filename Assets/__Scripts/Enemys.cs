@@ -8,9 +8,12 @@ public class Enemys : MonoBehaviour
     [SerializeField] int rows = 5;//rows of enemys, typically there are 5
     [SerializeField] int columns = 11;//columns of enemys, typically there are 11
     [SerializeField] float EnemySpacing = 2;//seperation space 
+    [SerializeField] float enemyAttackRate = 0.4f;// interval of attacks
     public AnimationCurve EnemySpeed;//x,y graph with x being % killed and y being speed
+    public Bomb bombPrefab;
     private Vector3 direction = Vector2.right;
-    public int enemyTotal => this.rows * this.columns;//for calculations
+    public int enemyTotal => this.rows * this.columns;//for calculations of attack&move speed
+    public int enemyTotalAlive => this.enemyTotal - this.killCount;//for calculation attack speed
     public int killCount { get; private set; }//half public half private
     public float percentKilled => (float)this.killCount / (float)this.enemyTotal;//used for game speed
 
@@ -36,6 +39,12 @@ public class Enemys : MonoBehaviour
             }
         }
     }
+
+    private void Start()
+    {
+        InvokeRepeating(nameof(enemyAttack), this.enemyAttackRate, this.enemyAttackRate);//invokes enemy attack every set interval
+    }
+
     private void Update()//every frame
     {
         this.transform.position += this.EnemySpeed.Evaluate(this.percentKilled) * Time.deltaTime * direction;//consistent movement regardless of fps
@@ -45,7 +54,7 @@ public class Enemys : MonoBehaviour
 
         foreach (Transform enemy in this.transform)//loops through all child objects attached to this
         {
-            if (!enemy.gameObject.activeInHierarchy)//if enemy is active or disabled
+            if (!enemy.gameObject.activeInHierarchy)//if enemy is active or disabled if not active its killed
             {
                 continue;
             }
@@ -58,6 +67,22 @@ public class Enemys : MonoBehaviour
             else if (direction == Vector3.left && enemy.position.x <= LEdge.x + 1.0f)//1 for padding so they dont exceed screen
             {
                 DecendRow();
+            }
+        }
+    }
+    private void enemyAttack()
+    {
+        foreach (Transform enemy in this.transform)//loops through all child objects attached to this
+        {
+            if (!enemy.gameObject.activeInHierarchy)//if enemy is active or disabled if not active its killed
+            {
+                continue;
+            }
+            //random is a value between 0 and 1, the more enemys killed the higher chance the alive enemys will shoot
+            if (Random.value < (1.0f / (float)this.enemyTotalAlive))
+            {
+                Instantiate(this.bombPrefab, enemy.position, Quaternion.identity);
+                break;//only one missile can be launched at a time
             }
         }
     }

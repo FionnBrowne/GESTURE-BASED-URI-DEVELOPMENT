@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public float horizontalSpeed = 2.0f;
     public Laser laserPrefab;
     public float firingRate = 0.5f;
+    public System.Action killed;// if player is dead
 
     private GameObject laserParent;
     private Coroutine firingCoroutine;
@@ -136,7 +137,20 @@ public class PlayerController : MonoBehaviour
             myo.Unlock(UnlockType.Timed);
         }
         //un comment when done
-        myo.NotifyUserAction();
+        //myo.NotifyUserAction();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.GetComponent<Laser>())
+        {
+            this.killed.Invoke();
+            //destroy bomb
+            Destroy(collision.gameObject);
+            //destroy the player
+            Destroy(gameObject);
+
+        }
     }
 
 }
