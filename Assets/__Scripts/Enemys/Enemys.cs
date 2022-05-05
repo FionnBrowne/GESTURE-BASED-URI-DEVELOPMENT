@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Enemys : MonoBehaviour
@@ -55,6 +56,9 @@ public class Enemys : MonoBehaviour
 
     private void Update()//every frame
     {
+
+
+
         this.transform.position += this.EnemySpeed.Evaluate(this.percentKilled) * Time.deltaTime * direction * speedMultiplier;//consistent movement regardless of fps
 
         Vector3 LEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);//translate view port cordinates to world cordinates
@@ -106,12 +110,22 @@ public class Enemys : MonoBehaviour
     {
         this.killCount++;
         UpdateScore(10);
+        if (enemyTotalAlive == 0)
+        {
+            StartCoroutine(Dead());
+        }
     }
 
     private void UpdateScore(int value)
     {
         score += value;
         scoreLabel.text = $"Score: {score}";
+    }
+
+    private IEnumerator Dead()
+    {
+        yield return new WaitForSecondsRealtime(5);
+        SceneManager.LoadScene(0);
     }
 
 }

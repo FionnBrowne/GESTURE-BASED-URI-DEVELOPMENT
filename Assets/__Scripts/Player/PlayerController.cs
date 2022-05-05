@@ -113,6 +113,24 @@ public class PlayerController : MonoBehaviour
 
                 ExtendUnlockAndNotifyUserAction(thalmicMyo);
             }
+
+            else if (thalmicMyo.pose == Pose.DoubleTap)
+            {
+
+                if (Time.timeScale == 1)
+                {
+                    Time.timeScale = 0;
+                }
+                else
+                {
+                    Time.timeScale = 1;
+                }
+                
+
+                ExtendUnlockAndNotifyUserAction(thalmicMyo);
+            }
+
+
         }
     }
 
