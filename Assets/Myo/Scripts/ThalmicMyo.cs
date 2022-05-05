@@ -58,7 +58,7 @@ public class ThalmicMyo : MonoBehaviour {
     public void Lock () {
         _myo.Lock ();
     }
-
+    //un comment when done
     /// Notify the Myo that a user action was recognized.
     public void NotifyUserAction () {
         _myo.NotifyUserAction ();

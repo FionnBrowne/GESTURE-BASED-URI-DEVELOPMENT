@@ -7,9 +7,14 @@ public class Enemys : MonoBehaviour
     public Enemy[] prefabs;//used for each row
     [SerializeField] int rows = 5;//rows of enemys, typically there are 5
     [SerializeField] int columns = 11;//columns of enemys, typically there are 11
-    [SerializeField] float EnemySpacing = 2;//columns of enemys, typically there are 11
-    [SerializeField] float EnemySpeed = 3.0f;//columns of enemys, typically there are 11
+    [SerializeField] float EnemySpacing = 2;//seperation space 
+    public AnimationCurve EnemySpeed;//x,y graph with x being % killed and y being speed
     private Vector3 direction = Vector2.right;
+    public int enemyTotal => this.rows * this.columns;//for calculations
+    public int killCount { get; private set; }//half public half private
+    public float percentKilled => (float)this.killCount / (float)this.enemyTotal;//used for game speed
+
+
 
     private void Awake()
     {
@@ -24,6 +29,7 @@ public class Enemys : MonoBehaviour
             {
                 //Instantiate each enemy which will be which ever we are on.
                 Enemy enemy = Instantiate(this.prefabs[row], this.transform);
+                enemy.killed += EnemyKilled;
                 Vector3 position = rowPos;//set the position of invader to row
                 position.x += column * EnemySpacing;//offsetting the enemys
                 enemy.transform.localPosition = position;//relative to parent positioning
@@ -32,7 +38,7 @@ public class Enemys : MonoBehaviour
     }
     private void Update()//every frame
     {
-        this.transform.position += this.EnemySpeed * Time.deltaTime * direction;//consistent movement regardless of fps
+        this.transform.position += this.EnemySpeed.Evaluate(this.percentKilled) * Time.deltaTime * direction;//consistent movement regardless of fps
 
         Vector3 LEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);//translate view port cordinates to world cordinates
         Vector3 REdge = Camera.main.ViewportToWorldPoint(Vector3.right);//translate view port cordinates to world cordinates
@@ -61,5 +67,10 @@ public class Enemys : MonoBehaviour
         Vector3 position = this.transform.position;//get current position
         position.y -= 1.0f;//decend enemy
         this.transform.position = position;//assign back to transform
+    }
+
+    private void EnemyKilled()
+    {
+        this.killCount++;
     }
 }

@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
         {
             myo.Unlock(UnlockType.Timed);
         }
-
+        //un comment when done
         myo.NotifyUserAction();
     }
 

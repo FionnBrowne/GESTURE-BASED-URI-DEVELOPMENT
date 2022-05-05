@@ -76,7 +76,7 @@ public class ColorBoxByPose : MonoBehaviour
         if (hub.lockingPolicy == LockingPolicy.Standard) {
             myo.Unlock (UnlockType.Timed);
         }
-
+        //un comment when done
         myo.NotifyUserAction ();
     }
 }

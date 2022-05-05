@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     public float animationTime = 0.7f;//duration of each sprite
     private SpriteRenderer spriteRenderer;//which sprite is rendered
     private int currentAnimation;//keeps track of current sprite 
+    public System.Action killed;// if invader is dead
 
     private void Awake()
     {
@@ -33,10 +34,12 @@ public class Enemy : MonoBehaviour
     {
         if (collision.GetComponent<Laser>())
         {
+            this.killed.Invoke();
             //destroy laser
             Destroy(collision.gameObject);
             //destroy the enemy
             Destroy(gameObject);
+
         }
     }
 
