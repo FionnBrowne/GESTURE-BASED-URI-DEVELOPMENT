@@ -1,22 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemys : MonoBehaviour
 {
     public Enemy[] prefabs;//used for each row
-    [SerializeField] int rows = 5;//rows of enemys, typically there are 5
-    [SerializeField] int columns = 11;//columns of enemys, typically there are 11
-    [SerializeField] float EnemySpacing = 2;//seperation space 
-    [SerializeField] float enemyAttackRate = 0.4f;// interval of attacks
+    [SerializeField] private int rows = 5;//rows of enemys, typically there are 5
+    [SerializeField] private int columns = 11;//columns of enemys, typically there are 11
+    [SerializeField] private float EnemySpacing = 2;//seperation space 
+    [SerializeField] private float enemyAttackRate = 0.4f;// interval of attacks
+    [SerializeField] private Text scoreLabel;
     public AnimationCurve EnemySpeed;//x,y graph with x being % killed and y being speed
+    public float speedMultiplier = 1.0f;
     public Bomb bombPrefab;
+
     private Vector3 direction = Vector2.right;
     public int enemyTotal => this.rows * this.columns;//for calculations of attack&move speed
     public int enemyTotalAlive => this.enemyTotal - this.killCount;//for calculation attack speed
     public int killCount { get; private set; }//half public half private
     public float percentKilled => (float)this.killCount / (float)this.enemyTotal;//used for game speed
 
+    private int score;
 
 
     private void Awake()
@@ -38,6 +43,9 @@ public class Enemys : MonoBehaviour
                 enemy.transform.localPosition = position;//relative to parent positioning
             }
         }
+
+        score = 0;
+        scoreLabel.text = $"Score: {score}";
     }
 
     private void Start()
@@ -47,7 +55,7 @@ public class Enemys : MonoBehaviour
 
     private void Update()//every frame
     {
-        this.transform.position += this.EnemySpeed.Evaluate(this.percentKilled) * Time.deltaTime * direction;//consistent movement regardless of fps
+        this.transform.position += this.EnemySpeed.Evaluate(this.percentKilled) * Time.deltaTime * direction * speedMultiplier;//consistent movement regardless of fps
 
         Vector3 LEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);//translate view port cordinates to world cordinates
         Vector3 REdge = Camera.main.ViewportToWorldPoint(Vector3.right);//translate view port cordinates to world cordinates
@@ -97,5 +105,13 @@ public class Enemys : MonoBehaviour
     private void EnemyKilled()
     {
         this.killCount++;
+        UpdateScore(10);
     }
+
+    private void UpdateScore(int value)
+    {
+        score += value;
+        scoreLabel.text = $"Score: {score}";
+    }
+
 }
