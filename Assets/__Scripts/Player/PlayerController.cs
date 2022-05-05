@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
             myo.Unlock(UnlockType.Timed);
         }
         //un comment when done
-        //myo.NotifyUserAction();
+        myo.NotifyUserAction();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

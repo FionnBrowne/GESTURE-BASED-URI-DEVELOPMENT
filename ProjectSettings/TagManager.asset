@@ -13,10 +13,10 @@ TagManager:
   - UI
   - GameObject
   - Background
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Bomb
+  - Laser
   - 
   - 
   - 

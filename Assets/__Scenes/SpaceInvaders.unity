@@ -266,6 +266,7 @@ MonoBehaviour:
   rows: 5
   columns: 11
   EnemySpacing: 2
+  enemyAttackRate: 0.4
   EnemySpeed:
     serializedVersion: 2
     m_Curve:
@@ -290,6 +291,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  bombPrefab: {fileID: 3512300681754038751, guid: ba6bd62f28d5839418236549aabd78b5, type: 3}
 --- !u!4 &384358677
 Transform:
   m_ObjectHideFlags: 0
@@ -1178,10 +1180,6 @@ PrefabInstance:
       propertyPath: myo
       value: 
       objectReference: {fileID: 1020557455}
-    - target: {fileID: 1842431698865705059, guid: 9b5719d02b37ac044abd1c173a53cdd0, type: 3}
-      propertyPath: laserPrefab
-      value: 
-      objectReference: {fileID: 713273985, guid: 00a3e509a4d253c47928964259a47026, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b5719d02b37ac044abd1c173a53cdd0, type: 3}
 --- !u!1001 &3607701209078708015

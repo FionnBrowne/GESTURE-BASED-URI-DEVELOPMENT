@@ -77,6 +77,6 @@ public class ColorBoxByPose : MonoBehaviour
             myo.Unlock (UnlockType.Timed);
         }
         //un comment when done
-       // myo.NotifyUserAction ();
+        myo.NotifyUserAction ();
     }
 }
